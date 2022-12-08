@@ -29,7 +29,7 @@ namespace HelloWorld{
                     var whichType = Random.Next(2);
 
                     // Generate a random velocity for this object
-                    var randomY = Random.Next(1, 3);
+                    var RandomY = Random.Next(0, 10);
                     var randomX = Random.Next(ScreenWidth);
 
                     // Each object will start about the center of the screen
@@ -38,7 +38,6 @@ namespace HelloWorld{
                     Console.WriteLine("Creating an alien");
                     var square = new Alien(Color.PURPLE, 20);
                     square.Position = position;
-                    square.Velocity = new Vector2(0, randomY);
                     Objects.Add(square);
 
                     CountOfEachShape += 1;
@@ -69,11 +68,32 @@ namespace HelloWorld{
                 }
 
                 var message = $"Current Points:{points}";
+                Raylib.DrawText(message, 0, 30, 20, Color.BLACK);
 
                 Raylib.EndDrawing();
 
+                if(Pilot.IsShooting()){
+                    var rectangle = new Laser(Color.PURPLE, 20);
+                    rectangle.Position = Pilot.Position;
+                    rectangle.Velocity = new Vector2(0, -5);
+                    Objects.Add(rectangle);
+                }
 
-                Raylib.CloseWindow();
+                var randomShoot = Random.Next(0, 10);
+                var randomShip = Random.Next(0, 10);
+
+                if(randomShoot == 0){
+                    var rectangle = new Laser(Color.PURPLE, 20);
+                    rectangle.Position = Objects[randomShip].Position;
+                    rectangle.Velocity = new Vector2(0, 5);
+                    Objects.Add(rectangle);
+                }
+
+                Pilot.Move();
+
+                foreach(var obj in Objects.ToList()){
+                    obj.Move();
+                }
             }
 
             Raylib.CloseWindow();

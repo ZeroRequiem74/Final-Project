@@ -25,6 +25,22 @@ class ColoredObject: GameObject {
     }
 }
 
+class Laser: ColoredObject {
+    public int Size { get; set; }
+
+    public Laser(Color color, int size): base(color) {
+        Size = size;
+    }
+
+    public Rectangle Rect() {
+        return new Rectangle(Position.X, Position.Y, Size, Size * 2);
+    }
+
+    override public void Draw() {
+        Raylib.DrawRectangle((int)Position.X, (int)Position.Y, Size, Size, Color);
+    }
+}
+
 class Alien: ColoredObject {
 
     
@@ -38,15 +54,36 @@ class Alien: ColoredObject {
         return new Rectangle(Position.X, Position.Y, Size, Size);
     }
 
+    public override void Move()
+    {
+        // Reset the velocity every frame unless keys are being pressed
+        var velocity = new Vector2();
+        var movementSpeed = 2;
+
+        if (Position.X + 10 == 800){
+            velocity.X = -movementSpeed;
+        }
+
+        if (Position.X - 10 == 0 ) {
+            velocity.X = movementSpeed;
+        }
+
+        if (Position.Y < 240) {
+            velocity.Y += movementSpeed;
+        }
+
+        if (Position.Y == 240) {
+            velocity.Y = 0;
+        }
+
+
+        Velocity = velocity;
+
+        base.Move();
+    }
+
     override public void Draw() {
         Raylib.DrawRectangle((int)Position.X, (int)Position.Y, Size, Size, Color);
-    }
-}
-
-class AlienPoints{
-    static public int AddPoints() {
-        int Addpoints = 1;
-        return Addpoints;
     }
 }
 
@@ -82,6 +119,10 @@ class Pilot: GameObject {
         Velocity = velocity;
 
         base.Move();
+    }
+
+    public bool IsShooting(){
+        return Raylib.IsKeyDown(KeyboardKey.KEY_SPACE);
     }
 
     public override void Draw() {
