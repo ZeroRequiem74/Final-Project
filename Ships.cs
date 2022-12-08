@@ -41,19 +41,21 @@ class Laser: ColoredObject {
     }
 }
 
-class Alien: ColoredObject {
+class Alien: GameObject {
 
     
-    public int Size { get; set; }
+    Texture2D texture;
 
-    public Alien(Color color, int size): base(color) {
-        Size = size;
+    public Alien() {
+        
+        var image = Raylib.LoadImage("alien.png");
+        this.texture = Raylib.LoadTextureFromImage(image);
+        Raylib.UnloadImage(image);
     }
 
     public Rectangle Rect() {
-        return new Rectangle(Position.X, Position.Y, Size, Size);
+        return new Rectangle(Position.X, Position.Y, 50, 53);
     }
-
     public override void Move()
     {
         // Reset the velocity every frame unless keys are being pressed
@@ -76,14 +78,13 @@ class Alien: ColoredObject {
             velocity.Y = 0;
         }
 
-
         Velocity = velocity;
 
         base.Move();
     }
 
     override public void Draw() {
-        Raylib.DrawRectangle((int)Position.X, (int)Position.Y, Size, Size, Color);
+        Raylib.DrawTexture(this.texture, (int)Position.X, (int)Position.Y, Color.WHITE);
     }
 }
 
@@ -93,7 +94,7 @@ class Pilot: GameObject {
 
     public Pilot() {
         
-        var image = Raylib.LoadImage("link.png");
+        var image = Raylib.LoadImage("Galaga.png");
         this.texture = Raylib.LoadTextureFromImage(image);
         Raylib.UnloadImage(image);
     }

@@ -36,7 +36,7 @@ namespace HelloWorld{
                     var position = new Vector2(randomX, 0);
                     
                     Console.WriteLine("Creating an alien");
-                    var square = new Alien(Color.PURPLE, 20);
+                    var square = new Alien();
                     square.Position = position;
                     Objects.Add(square);
 
@@ -54,14 +54,15 @@ namespace HelloWorld{
 
 
                 foreach (var obj in Objects.ToList()) {
-                    if (obj is Alien) {
+                    if (obj is Laser) {
                         var shape = (Alien)obj;
-                        if (Raylib.CheckCollisionRecs(Pilot.Rect(), shape.Rect())) {
+                        var laser = (Laser)obj;
+                        if (Raylib.CheckCollisionRecs(Pilot.Rect(), laser.Rect())) {
                             lives -= 1;
                             Objects.Remove(obj);
                             CountOfEachShape -= 1;
                         }
-                        if (Raylib.CheckCollisionRecs(Pilot.Rect(), shape.Rect())){
+                        if (Raylib.CheckCollisionRecs(shape.Rect(), laser.Rect())){
                             points += 1;
                         }
                     }
