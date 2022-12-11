@@ -13,6 +13,7 @@ namespace HelloWorld{
             Raylib.SetTargetFPS(60);
 
             var Objects = new List<GameObject>();
+            var Lasers = new List<GameObject>();
             var Random = new Random();
             var Pilot = new Pilot();
             var CountOfEachShape = 0;
@@ -43,6 +44,23 @@ namespace HelloWorld{
                     CountOfEachShape += 1;
                 }
 
+                if(Pilot.IsShooting()){
+                    var rectangle = new Laser(Color.PURPLE, 20);
+                    rectangle.Position = Pilot.Position;
+                    rectangle.Velocity = new Vector2(0, -5);
+                    Lasers.Add(rectangle);
+                }
+
+                var randomShoot = Random.Next(0, 10);
+                var randomShip = Random.Next(0, 10);
+
+                if(randomShoot == 0){
+                    var rectangle = new Laser(Color.PURPLE, 20);
+                    rectangle.Position = Objects[randomShip].Position;
+                    rectangle.Velocity = new Vector2(0, 5);
+                    Lasers.Add(rectangle);
+                }
+
                 Raylib.BeginDrawing();
                 Raylib.ClearBackground(Color.WHITE);
 
@@ -54,16 +72,26 @@ namespace HelloWorld{
 
 
                 foreach (var obj in Objects.ToList()) {
-                    if (obj is Laser) {
-                        var shape = (Alien)obj;
-                        var laser = (Laser)obj;
-                        if (Raylib.CheckCollisionRecs(Pilot.Rect(), laser.Rect())) {
-                            lives -= 1;
-                            Objects.Remove(obj);
-                            CountOfEachShape -= 1;
+                    if (obj is Alien) {
+                        var ship = (Alien)obj;
+                        foreach (var laser in Lasers.ToList()){
+                            var blast = (Laser)laser;
+                            if (Raylib.CheckCollisionRecs(ship.Rect(), blast.Rect())) {
+                                Objects.Remove(ship);
+                                Lasers.Remove(blast);
+                                CountOfEachShape -= 1;
+                            }
                         }
-                        if (Raylib.CheckCollisionRecs(shape.Rect(), laser.Rect())){
-                            points += 1;
+                    
+                    }                    
+                }
+
+                foreach (var laser in Lasers.ToList()) {
+                    if (laser is Laser){
+                        var blast = (Laser)laser;
+                        if (Raylib.CheckCollisionRecs(blast.Rect(), Pilot.Rect())) {
+                            lives -= 1;
+                            Lasers.Remove(blast);
                         }
                     }
                 }
@@ -73,28 +101,13 @@ namespace HelloWorld{
 
                 Raylib.EndDrawing();
 
-                if(Pilot.IsShooting()){
-                    var rectangle = new Laser(Color.PURPLE, 20);
-                    rectangle.Position = Pilot.Position;
-                    rectangle.Velocity = new Vector2(0, -5);
-                    Objects.Add(rectangle);
-                }
-
-                var randomShoot = Random.Next(0, 10);
-                var randomShip = Random.Next(0, 10);
-
-                if(randomShoot == 0){
-                    var rectangle = new Laser(Color.PURPLE, 20);
-                    rectangle.Position = Objects[randomShip].Position;
-                    rectangle.Velocity = new Vector2(0, 5);
-                    Objects.Add(rectangle);
+                foreach(var obj in Objects.ToList()){
+                    obj.Move();
                 }
 
                 Pilot.Move();
 
-                foreach(var obj in Objects.ToList()){
-                    obj.Move();
-                }
+                
             }
 
             Raylib.CloseWindow();

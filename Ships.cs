@@ -33,7 +33,7 @@ class Laser: ColoredObject {
     }
 
     public Rectangle Rect() {
-        return new Rectangle(Position.X, Position.Y, Size, Size * 2);
+        return new Rectangle(Position.X, Position.Y, Size, Size);
     }
 
     override public void Draw() {
@@ -142,10 +142,5 @@ class Points: ColoredObject{
     public override void Draw() {
         Raylib.DrawText(this.Text, (int)Position.X, (int)Position.Y, 20, this.Color);
     }
-    static public int PlayerPoints(int points, int addPoints){
-        points += addPoints;
-        return points;
-    }
-
-
+    
 }
