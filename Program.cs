@@ -39,6 +39,7 @@ namespace HelloWorld{
                     Console.WriteLine("Creating an alien");
                     var square = new Alien();
                     square.Position = position;
+                    square.Velocity = new Vector2(2, 5);
                     Objects.Add(square);
 
                     CountOfEachShape += 1;
@@ -46,17 +47,21 @@ namespace HelloWorld{
 
                 if(Pilot.IsShooting()){
                     var rectangle = new Laser(Color.PURPLE, 20);
-                    rectangle.Position = Pilot.Position;
+                    var laser = Pilot.Position;
+                    laser.Y -= 50;
+                    rectangle.Position = laser;
                     rectangle.Velocity = new Vector2(0, -5);
                     Lasers.Add(rectangle);
                 }
 
                 var randomShoot = Random.Next(0, 10);
-                var randomShip = Random.Next(0, 10);
+                var randomShip = Random.Next(Objects.Count);
 
                 if(randomShoot == 0){
                     var rectangle = new Laser(Color.PURPLE, 20);
-                    rectangle.Position = Objects[randomShip].Position;
+                    var blast = Objects[randomShip].Position;
+                    blast.Y += 0;
+                    rectangle.Position = blast;
                     rectangle.Velocity = new Vector2(0, 5);
                     Lasers.Add(rectangle);
                 }
@@ -66,6 +71,10 @@ namespace HelloWorld{
 
                 foreach (var obj in Objects) {
                     obj.Draw();
+                }
+
+                foreach (var laser in Lasers) {
+                    laser.Draw();
                 }
 
                 Pilot.Draw();
@@ -80,6 +89,7 @@ namespace HelloWorld{
                                 Objects.Remove(ship);
                                 Lasers.Remove(blast);
                                 CountOfEachShape -= 1;
+                                points += 1;
                             }
                         }
                     
@@ -103,6 +113,10 @@ namespace HelloWorld{
 
                 foreach(var obj in Objects.ToList()){
                     obj.Move();
+                }
+
+                foreach(var laser in Lasers.ToList()){
+                    laser.Move();
                 }
 
                 Pilot.Move();

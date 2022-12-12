@@ -44,7 +44,7 @@ class Laser: ColoredObject {
 class Alien: GameObject {
 
     
-    Texture2D texture;
+    private Texture2D texture;
 
     public Alien() {
         
