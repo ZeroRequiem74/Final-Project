@@ -13,12 +13,15 @@ namespace HelloWorld{
             Raylib.SetTargetFPS(60);
 
             var Objects = new List<GameObject>();
-            var Lasers = new List<GameObject>();
+            var PlayerLasers = new List<GameObject>();
+            var EnemyLasers = new List<GameObject>();
             var Random = new Random();
             var Pilot = new Pilot();
             var CountOfEachShape = 0;
             int points = 0;
             int lives = 3;
+            int shootCountdown = 60;
+            bool canShoot = true;
 
             
             Pilot.Position = new Vector2(400, 425);
@@ -45,16 +48,26 @@ namespace HelloWorld{
                     CountOfEachShape += 1;
                 }
 
-                if(Pilot.IsShooting()){
+                shootCountdown -= 1;
+
+                if(shootCountdown <= 0){
+                    canShoot = true;
+                }
+                else{
+                    canShoot = false;
+                }
+
+                if(Pilot.IsShooting() && canShoot){
                     var rectangle = new Laser(Color.PURPLE, 20);
                     var laser = Pilot.Position;
                     laser.Y -= 50;
                     rectangle.Position = laser;
                     rectangle.Velocity = new Vector2(0, -5);
-                    Lasers.Add(rectangle);
+                    PlayerLasers.Add(rectangle);
+                    shootCountdown = 60;
                 }
 
-                var randomShoot = Random.Next(0, 10);
+                var randomShoot = Random.Next(0, 50);
                 var randomShip = Random.Next(Objects.Count);
 
                 if(randomShoot == 0){
@@ -63,7 +76,7 @@ namespace HelloWorld{
                     blast.Y += 0;
                     rectangle.Position = blast;
                     rectangle.Velocity = new Vector2(0, 5);
-                    Lasers.Add(rectangle);
+                    EnemyLasers.Add(rectangle);
                 }
 
                 Raylib.BeginDrawing();
@@ -73,7 +86,11 @@ namespace HelloWorld{
                     obj.Draw();
                 }
 
-                foreach (var laser in Lasers) {
+                foreach (var laser in PlayerLasers) {
+                    laser.Draw();
+                }
+
+                foreach (var laser in EnemyLasers) {
                     laser.Draw();
                 }
 
@@ -83,11 +100,11 @@ namespace HelloWorld{
                 foreach (var obj in Objects.ToList()) {
                     if (obj is Alien) {
                         var ship = (Alien)obj;
-                        foreach (var laser in Lasers.ToList()){
+                        foreach (var laser in PlayerLasers.ToList()){
                             var blast = (Laser)laser;
                             if (Raylib.CheckCollisionRecs(ship.Rect(), blast.Rect())) {
                                 Objects.Remove(ship);
-                                Lasers.Remove(blast);
+                                PlayerLasers.Remove(blast);
                                 CountOfEachShape -= 1;
                                 points += 1;
                             }
@@ -96,12 +113,12 @@ namespace HelloWorld{
                     }                    
                 }
 
-                foreach (var laser in Lasers.ToList()) {
+                foreach (var laser in EnemyLasers.ToList()) {
                     if (laser is Laser){
                         var blast = (Laser)laser;
                         if (Raylib.CheckCollisionRecs(blast.Rect(), Pilot.Rect())) {
                             lives -= 1;
-                            Lasers.Remove(blast);
+                            EnemyLasers.Remove(blast);
                         }
                     }
                 }
@@ -115,7 +132,11 @@ namespace HelloWorld{
                     obj.Move();
                 }
 
-                foreach(var laser in Lasers.ToList()){
+                foreach(var laser in PlayerLasers.ToList()){
+                    laser.Move();
+                }
+
+                foreach(var laser in EnemyLasers.ToList()){
                     laser.Move();
                 }
 
